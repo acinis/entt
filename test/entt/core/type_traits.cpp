@@ -91,6 +91,7 @@ TEST(Choice, Functionalities) {
 TEST(TypeList, Functionalities) {
     using type = entt::type_list<int, char>;
     using other = entt::type_list<double>;
+    using longer = entt::type_list<float, int, float, char>;
 
     ASSERT_EQ(type::size, 2u);
     ASSERT_EQ(other::size, 1u);
@@ -104,6 +105,20 @@ TEST(TypeList, Functionalities) {
     ASSERT_TRUE((entt::type_list_contains_v<type, int>));
     ASSERT_TRUE((entt::type_list_contains_v<type, char>));
     ASSERT_FALSE((entt::type_list_contains_v<type, double>));
+
+    ASSERT_TRUE((entt::type_list_subset_of_v<longer, entt::type_list<int, char>>));
+    ASSERT_TRUE((entt::type_list_subset_of_v<longer, entt::type_list<char, int>>));
+    ASSERT_TRUE((entt::type_list_subset_of_v<longer, entt::type_list<float, int>>));
+    ASSERT_TRUE((entt::type_list_subset_of_v<longer, entt::type_list<float, float>>));
+    ASSERT_TRUE((entt::type_list_subset_of_v<longer, entt::type_list<float>>));
+    ASSERT_FALSE((entt::type_list_subset_of_v<longer, entt::type_list<bool>>));
+    ASSERT_FALSE((entt::type_list_subset_of_v<longer, entt::type_list<int, bool>>));
+    ASSERT_FALSE((entt::type_list_subset_of_v<longer, entt::type_list<float, float, float>>)); // TODO Rethink
+
+    // The empty set is a subset of every set.
+    ASSERT_TRUE((entt::type_list_subset_of_v<entt::type_list<>, entt::type_list<>>));
+    ASSERT_TRUE((entt::type_list_subset_of_v<entt::type_list<int>, entt::type_list<>>));
+    ASSERT_FALSE((entt::type_list_subset_of_v<entt::type_list<>, entt::type_list<int>>));
 
     testing::StaticAssertTypeEq<entt::type_list_element_t<0u, type>, int>();
     testing::StaticAssertTypeEq<entt::type_list_element_t<1u, type>, char>();

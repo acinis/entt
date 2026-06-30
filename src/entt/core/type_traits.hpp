@@ -293,6 +293,32 @@ struct type_list_contains<type_list<Type...>, Other>
 template<typename List, typename Type>
 inline constexpr bool type_list_contains_v = type_list_contains<List, Type>::value;
 
+/**
+ * @brief Provides the member constant `value` equal to true if second type list
+ * is subset of first, false otherwise.
+ * @tparam List First type list (possible superset).
+ * @tparam Other Second type list (possible subset).
+ */
+template<typename List, typename Other>
+struct type_list_subset_of;
+
+/**
+ * @copybrief type_list_subset_of
+ * @tparam List Types provided by the first type list (possible superset).
+ * @tparam Other Types provided by the second type list (possible subset).
+ */
+template<typename... List, typename... Other>
+struct type_list_subset_of<type_list<List...>, type_list<Other...>>
+    : stl::bool_constant<(entt::type_list_contains_v<entt::type_list<List...>, Other> && ...)> {};
+
+/**
+ * @brief Helper variable template.
+ * @tparam List First type list (possible superset).
+ * @tparam Other Second type list (possible·subset).
+ */
+template<typename List, typename Other>
+inline constexpr bool type_list_subset_of_v = type_list_subset_of<List, Other>::value;
+
 /*! @brief Primary template isn't defined on purpose. */
 template<typename...>
 struct type_list_diff;
